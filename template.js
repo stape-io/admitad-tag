@@ -1,85 +1,123 @@
-﻿const sendHttpRequest = require('sendHttpRequest');
-const setCookie = require('setCookie');
-const parseUrl = require('parseUrl');
-const JSON = require('JSON');
-const getRequestHeader = require('getRequestHeader');
+﻿const BigQuery = require('BigQuery');
 const encodeUriComponent = require('encodeUriComponent');
-const getCookieValues = require('getCookieValues');
 const getAllEventData = require('getAllEventData');
-const logToConsole = require('logToConsole');
 const getContainerVersion = require('getContainerVersion');
+const getCookieValues = require('getCookieValues');
+const getRequestHeader = require('getRequestHeader');
+const getTimestampMillis = require('getTimestampMillis');
+const getType = require('getType');
+const JSON = require('JSON');
+const logToConsole = require('logToConsole');
+const makeInteger = require('makeInteger');
 const makeString = require('makeString');
+const parseUrl = require('parseUrl');
+const sendHttpRequest = require('sendHttpRequest');
+const setCookie = require('setCookie');
 
-const containerVersion = getContainerVersion();
-const isDebug = containerVersion.debugMode;
-const isLoggingEnabled = determinateIsLoggingEnabled();
+/**********************************************************************************************/
+
 const traceId = getRequestHeader('trace-id');
+
 const eventData = getAllEventData();
 
 if (!isConsentGivenOrNotRequired()) {
   return data.gtmOnSuccess();
 }
 
-if (data.type === 'page_view') {
-  const url = eventData.page_location || getRequestHeader('referer');
-
-  if (url) {
-    const value = parseUrl(url).searchParams[data.clickIdParameterName];
-
-    if (value) {
-      const options = {
-        domain: 'auto',
-        path: '/',
-        secure: true,
-        httpOnly: false,
-        'max-age': 86400 * 395
-      };
-
-      setCookie('_aid', value, options, false);
-    }
-  }
-} else {
-  const requestUrl = getRequestUrls();
-
-  for (let i = 0; i < requestUrl.length; i++) {
-    if (requestUrl[i]) {
-      sendRequest(requestUrl[i]);
-    }
-  }
+const url = eventData.page_location || getRequestHeader('referer');
+if (url && url.lastIndexOf('https://gtm-msr.appspot.com/', 0) === 0) {
+  return data.gtmOnSuccess();
 }
 
-data.gtmOnSuccess();
+const actionHandlers = {
+  page_view: trackPageView,
+  conversion: trackConversion
+};
+
+const handler = actionHandlers[data.type];
+if (handler) {
+  handler();
+} else {
+  return data.gtmOnFailure();
+}
+
+return data.gtmOnSuccess();
+
+/**********************************************************************************************/
+// Vendor related functions
+
+function trackPageView() {
+  if (!url) return;
+
+  const cookieOptions = {
+    domain: data.cookieDomain || 'auto',
+    path: '/',
+    secure: true,
+    httpOnly: false,
+    'max-age': 60 * 60 * 24 * (makeInteger(data.cookieExpiration) || 395)
+  };
+
+  const urlSearchParams = parseUrl(url).searchParams;
+
+  const clickIdValue = urlSearchParams[data.clickIdParameterName || 'admitad_uid'];
+  if (clickIdValue) {
+    setCookie('_aid', clickIdValue, cookieOptions, false);
+  }
+
+  const sourceChannelParametersName = (data.sourceChannelParameterName || 'utm_source')
+    .concat(',', data.additionalSourceChannelParametersName || '')
+    .split(',')
+    .filter((p) => !!p)
+    .map((p) => p.trim());
+  sourceChannelParametersName.some((p) => {
+    const sourceChannelParameterValue = urlSearchParams[p];
+    if (sourceChannelParameterValue) {
+      setCookie('_admitad_source', sourceChannelParameterValue, cookieOptions, false);
+      return true;
+    }
+    return false;
+  });
+}
+
+function trackConversion() {
+  const admitadSourceChannelParameterValue = (data.admitadSourceChannelParameterValue || 'admitad').toLowerCase();
+  const lastSourceChannel = (getCookieValues('_admitad_source')[0] || '').toLowerCase();
+
+  if (lastSourceChannel !== admitadSourceChannelParameterValue) return;
+
+  const requestUrls = getRequestUrls();
+
+  (requestUrls || []).forEach((requestUrl) => {
+    if (!requestUrl) return;
+    sendRequest(requestUrl);
+  });
+}
 
 function sendRequest(requestUrl) {
-  if (isLoggingEnabled) {
-    logToConsole(
-      JSON.stringify({
-        Name: 'Admitad',
-        Type: 'Request',
-        TraceId: traceId,
-        EventName: 'Conversion',
-        RequestMethod: 'GET',
-        RequestUrl: requestUrl
-      })
-    );
-  }
+  log({
+    Name: 'Admitad',
+    Type: 'Request',
+    TraceId: traceId,
+    EventName: 'Conversion',
+    RequestMethod: 'GET',
+    RequestUrl: requestUrl
+  });
 
   sendHttpRequest(
     requestUrl,
     (statusCode, headers, body) => {
-      if (isLoggingEnabled) {
-        logToConsole(
-          JSON.stringify({
-            Name: 'Admitad',
-            Type: 'Response',
-            TraceId: traceId,
-            EventName: 'Conversion',
-            ResponseStatusCode: statusCode,
-            ResponseHeaders: headers,
-            ResponseBody: body
-          })
-        );
-      }
+      log({
+        Name: 'Admitad',
+        Type: 'Response',
+        TraceId: traceId,
+        EventName: 'Conversion',
+        ResponseStatusCode: statusCode,
+        ResponseHeaders: headers,
+        ResponseBody: body
+      });
+      // https://support.mitgo.com/knowledge-base/article/integration-via-postback-request_2#how-to-set-postback-request
+      // "The Admitad server doesn't have any special response to postback requests.
+      // You will always see the status "HTTP 200 OK".
     },
     { method: 'GET' }
   );
@@ -151,10 +189,9 @@ function getRequestUrls() {
     return [requestUrl];
   }
 
+  const items = data.items || eventData.items || [];
 
-  const items = data.items || eventData.items || {};
-
-  if (!items && !items.length) {
+  if (!items || !items.length) {
     return [requestUrl];
   }
 
@@ -162,18 +199,18 @@ function getRequestUrls() {
 
   for (let i = 0; i < items.length; i++) {
     let item = items[i];
-    let itemUrl = requestUrl + '&quantity=' + enc((item.quantity || item.item_quantity));
+    let itemUrl = requestUrl + '&quantity=' + enc(item.quantity || item.item_quantity);
 
     if (item.positionId) {
-      itemUrl = itemUrl + '&position_id=' + enc((i+1));
+      itemUrl = itemUrl + '&position_id=' + enc(i + 1);
     }
 
     if (item.positionCount) {
-      itemUrl = itemUrl + '&position_count=' + enc((items.length+1));
+      itemUrl = itemUrl + '&position_count=' + enc(items.length);
     }
 
     if (item.productId) {
-      itemUrl = itemUrl + '&product_id=' + enc((item.productId || item.product_id || item.item_id));
+      itemUrl = itemUrl + '&product_id=' + enc(item.productId || item.product_id || item.item_id);
     }
 
     if (sameUrlExists(requestUrls, itemUrl)) {
@@ -186,22 +223,98 @@ function getRequestUrls() {
   return requestUrls;
 }
 
+/**********************************************************************************************/
+// Helpers
+
 function sameUrlExists(urls, url) {
   for (let i = 0; i < urls.length; i++) {
-    if (urls[i] === url) {
-      return true;
-    }
+    if (urls[i] === url) return true;
   }
-
   return false;
 }
 
 function enc(data) {
-  data = data || '';
-  return encodeUriComponent(makeString(data));
+  return encodeUriComponent(makeString(data || ''));
+}
+
+function isConsentGivenOrNotRequired() {
+  if (data.adStorageConsent !== 'required') return true;
+  if (eventData.consent_state) return !!eventData.consent_state.ad_storage;
+  const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"
+  return xGaGcs[2] === '1';
+}
+
+function log(rawDataToLog) {
+  const logDestinationsHandlers = {};
+  if (determinateIsLoggingEnabled()) logDestinationsHandlers.console = logConsole;
+  if (determinateIsLoggingEnabledForBigQuery()) logDestinationsHandlers.bigQuery = logToBigQuery;
+
+  // Key mappings for each log destination
+  const keyMappings = {
+    // No transformation for Console is needed.
+    bigQuery: {
+      Name: 'tag_name',
+      Type: 'type',
+      TraceId: 'trace_id',
+      EventName: 'event_name',
+      RequestMethod: 'request_method',
+      RequestUrl: 'request_url',
+      RequestBody: 'request_body',
+      ResponseStatusCode: 'response_status_code',
+      ResponseHeaders: 'response_headers',
+      ResponseBody: 'response_body'
+    }
+  };
+
+  for (const logDestination in logDestinationsHandlers) {
+    const handler = logDestinationsHandlers[logDestination];
+    if (!handler) continue;
+
+    const mapping = keyMappings[logDestination];
+    const dataToLog = mapping ? {} : rawDataToLog;
+    // Map keys based on the log destination
+    if (mapping) {
+      for (const key in rawDataToLog) {
+        const mappedKey = mapping[key] || key; // Fallback to original key if no mapping exists
+        dataToLog[mappedKey] = rawDataToLog[key];
+      }
+    }
+
+    handler(dataToLog);
+  }
+}
+
+function logConsole(dataToLog) {
+  logToConsole(JSON.stringify(dataToLog));
+}
+
+function logToBigQuery(dataToLog) {
+  const connectionInfo = {
+    projectId: data.logBigQueryProjectId,
+    datasetId: data.logBigQueryDatasetId,
+    tableId: data.logBigQueryTableId
+  };
+
+  // timestamp is required.
+  dataToLog.timestamp = getTimestampMillis();
+
+  // Columns with type JSON need to be stringified.
+  ['request_body', 'response_headers', 'response_body'].forEach((p) => {
+    // GTM Sandboxed JSON.parse returns undefined for malformed JSON but throws post-execution, causing execution failure.
+    // If fixed, could use: dataToLog[p] = JSON.stringify(JSON.parse(dataToLog[p]) || dataToLog[p]);
+    dataToLog[p] = JSON.stringify(dataToLog[p]);
+  });
+
+  // assertApi doesn't work for 'BigQuery.insert()'. It's needed to convert BigQuery into a function when testing.
+  // Ref: https://gtm-gear.com/posts/gtm-templates-testing/
+  const bigquery = getType(BigQuery) === 'function' ? BigQuery() /* Only during Unit Tests */ : BigQuery;
+  bigquery.insert(connectionInfo, [dataToLog], { ignoreUnknownValues: true });
 }
 
 function determinateIsLoggingEnabled() {
+  const containerVersion = getContainerVersion();
+  const isDebug = !!(containerVersion && (containerVersion.debugMode || containerVersion.previewMode));
+
   if (!data.logType) {
     return isDebug;
   }
@@ -217,9 +330,7 @@ function determinateIsLoggingEnabled() {
   return data.logType === 'always';
 }
 
-function isConsentGivenOrNotRequired() {
-  if (data.adStorageConsent !== 'required') return true;
-  if (eventData.consent_state) return !!eventData.consent_state.ad_storage;
-  const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"
-  return xGaGcs[2] === '1';
+function determinateIsLoggingEnabledForBigQuery() {
+  if (data.bigQueryLogType === 'no') return false;
+  return data.bigQueryLogType === 'always';
 }

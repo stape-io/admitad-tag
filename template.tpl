@@ -276,7 +276,8 @@ ___TEMPLATE_PARAMETERS___
             "displayName": "Products (Items)",
             "macrosInSelect": true,
             "selectItems": [],
-            "simpleValueType": true
+            "simpleValueType": true,
+            "notSetText": "(not set)"
           }
         ],
         "help": "By default, all parameters will be parsed from eventData"

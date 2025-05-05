@@ -1,12 +1,4 @@
-﻿___TERMS_OF_SERVICE___
-
-By creating or modifying this file you agree to Google Tag Manager's Community
-Template Gallery Developer Terms of Service available at
-https://developers.google.com/tag-manager/gallery-tos (or such other URL as
-Google may provide), as modified from time to time.
-
-
-___INFO___
+﻿___INFO___
 
 {
   "type": "TAG",
@@ -1177,7 +1169,7 @@ scenarios:
     assertApi('gtmOnSuccess').wasCalled();
     assertApi('gtmOnFailure').wasNotCalled();
     assertApi('setCookie').wasNotCalled();
-- name: PageView - Cookies are NOT set if URL contain the Traffic Source parameters,
+- name: PageView - Cookies are NOT set if URL contains the Traffic Source parameters,
     but it doesn't match the ones listed
   code: |
     setMockDataForPageview();
@@ -1359,24 +1351,24 @@ setup: "const JSON = require('JSON');\nconst Promise = require('Promise');\ncons
   \ setAdmitadSourceCookie = (cookieValue) => {\n  mock('getCookieValues', () => {\
   \ \n    if ('_admitad_source') return [cookieValue];\n  });\n};\n\nconst expectedPageViewData\
   \ = {\n  clickIdParameterName: 'admitad_uid',\n  sourceChannelParameterName: 'utm_source',\n\
-  \  additionalSourceChannelParametersName: 'gclid,fbclid',\n  cookieExpiration: 90,\n\
-  \  cookieDomain: 'expectedPaymentType'\n};\nconst setMockDataForPageview = (objToBeMerged)\
-  \ => {\n  mockData.type = 'page_view';\n  mockData.clickIdParameterName = expectedPageViewData.clickIdParameterName;\n\
+  \  additionalSourceChannelParametersName: 'gclid,fbclid',\n  admitadSourceChannelParameterValue:\
+  \ 'admitad',\n  cookieExpiration: 90,\n  cookieDomain: 'expectedPaymentType'\n};\n\
+  const setMockDataForPageview = (objToBeMerged) => {\n  mockData.type = 'page_view';\n\
+  \  mockData.clickIdParameterName = expectedPageViewData.clickIdParameterName;\n\
   \  mockData.sourceChannelParameterName = expectedPageViewData.sourceChannelParameterName;\n\
   \  mockData.additionalSourceChannelParametersName = expectedPageViewData.additionalSourceChannelParametersName;\n\
+  \  mockData.admitadSourceChannelParameterValue = expectedPageViewData.admitadSourceChannelParameterValue;\n\
   \  mockData.cookieExpiration = expectedPageViewData.cookieExpiration;\n  mockData.cookieDomain\
   \ = expectedPageViewData.cookieDomain;\n  mergeObj(expectedPageViewData, objToBeMerged);\n\
   \  return mergeObj(mockData, objToBeMerged);\n};\n\nconst expectedConversionData\
-  \ = {\n  admitadSourceChannelParameterValue: 'admitad',\n  campaignCode: 'expectedCampaignCode',\n\
-  \  postbackKey: 'expectedPostbackKey',\n  actionCode: 'expectedActionCode',\n  tariffCode:\
-  \ 'expectedTariffCode',\n  paymentType: 'sale',\n};\nconst setMockDataForConversion\
-  \ = (objToBeMerged) => {\n  mockData.type = 'conversion';\n  mockData.admitadSourceChannelParameterValue\
-  \ = expectedPageViewData.admitadSourceChannelParameterValue;\n  mockData.campaignCode\
-  \ = expectedConversionData.campaignCode;\n  mockData.postbackKey = expectedConversionData.postbackKey;\n\
-  \  mockData.actionCode = expectedConversionData.actionCode;\n  mockData.tariffCode\
-  \ = expectedConversionData.tariffCode;\n  mockData.paymentType = expectedConversionData.paymentType;\n\
-  \  mergeObj(expectedConversionData, objToBeMerged);\n  return mergeObj(mockData,\
-  \ objToBeMerged);\n};\n\n"
+  \ = {\n  campaignCode: 'expectedCampaignCode',\n  postbackKey: 'expectedPostbackKey',\n\
+  \  actionCode: 'expectedActionCode',\n  tariffCode: 'expectedTariffCode',\n  paymentType:\
+  \ 'sale',\n};\nconst setMockDataForConversion = (objToBeMerged) => {\n  mockData.type\
+  \ = 'conversion';\n  mockData.campaignCode = expectedConversionData.campaignCode;\n\
+  \  mockData.postbackKey = expectedConversionData.postbackKey;\n  mockData.actionCode\
+  \ = expectedConversionData.actionCode;\n  mockData.tariffCode = expectedConversionData.tariffCode;\n\
+  \  mockData.paymentType = expectedConversionData.paymentType;\n  mergeObj(expectedConversionData,\
+  \ objToBeMerged);\n  return mergeObj(mockData, objToBeMerged);\n};\n\n"
 
 
 ___NOTES___

@@ -520,7 +520,15 @@ function trackPageView() {
   sourceChannelParametersName.some((p) => {
     const sourceChannelParameterValue = urlSearchParams[p];
     if (sourceChannelParameterValue) {
-      setCookie('_admitad_source', sourceChannelParameterValue, cookieOptions, false);
+      const admitadSourceChannelParameterValue = data.admitadSourceChannelParameterValue || 'admitad';
+      setCookie(
+        '_admitad_source',
+        sourceChannelParameterValue.toLowerCase() === admitadSourceChannelParameterValue.toLowerCase()
+          ? 'admitad'
+          : 'other',
+        cookieOptions,
+        false
+      );
       return true;
     }
     return false;
@@ -528,14 +536,6 @@ function trackPageView() {
 }
 
 function trackConversion() {
-  // [TO DO] Remove it from code.
-  /*
-  const admitadSourceChannelParameterValue = (data.admitadSourceChannelParameterValue || 'admitad').toLowerCase();
-  const lastSourceChannel = (getCookieValues('_admitad_source')[0] || '').toLowerCase();
-
-  if (lastSourceChannel !== admitadSourceChannelParameterValue) return;
-  */
-
   const requestUrls = getRequestUrls();
 
   (requestUrls || []).forEach((requestUrl) => {
@@ -584,7 +584,7 @@ function getRequestUrls() {
   requestUrl = requestUrl + '&tariff_code=' + enc(data.tariffCode);
   requestUrl = requestUrl + '&payment_type=' + enc(data.paymentType);
 
-  requestUrl = requestUrl + '&channel=' + enc(getChannelParameter());
+  requestUrl = requestUrl + '&channel=' + enc(getCookieValues('_admitad_source')[0] || 'na');
 
   const orderId = data.orderId || eventData.orderId || eventData.order_id || eventData.transaction_id;
   if (orderId) {
@@ -678,13 +678,6 @@ function getRequestUrls() {
   }
 
   return requestUrls;
-}
-
-function getChannelParameter() {
-  const admitadSourceCookie = (getCookieValues('_admitad_source')[0] || '').toLowerCase();
-  if (!admitadSourceCookie) return 'na';
-  const admitadSourceChannelParameterValue = (data.admitadSourceChannelParameterValue || 'admitad').toLowerCase();
-  return admitadSourceCookie === admitadSourceChannelParameterValue ? 'admitad' : 'other';
 }
 
 function getUserAddressFromCommonEventData() {
@@ -1235,16 +1228,30 @@ scenarios:
     \ expectedClickId, {\n  domain: expectedCookieDomain,\n  path: '/',\n  secure:\
     \ true,\n  httpOnly: false,\n  'max-age': 60 * 60 * 24 * expectedCookieExpirationInDays\n\
     }, false);\n"
-- name: PageView - Traffic Source cookie is set if URL contains it
+- name: PageView - Traffic Source cookie is set if URL contains it and it matches
+    Admitad
   code: "const expectedCookieDomain = 'example.com';\nconst expectedCookieExpirationInDays\
     \ = 90;\nsetMockDataForPageview({\n  cookieDomain: expectedCookieDomain,\n  cookieExpiration:\
     \ expectedCookieExpirationInDays \n});\n\nconst expectedTrafficSource = 'expectedTrafficSource';\n\
     mock('getAllEventData', {\n  page_location: 'https://example.com/?utm_source='\
-    \ + expectedTrafficSource + '&admitad_uid=test'\n});\n\nrunCode(mockData);\n\n\
-    assertApi('gtmOnSuccess').wasCalled();\nassertApi('gtmOnFailure').wasNotCalled();\n\
-    assertApi('setCookie').wasCalledWith('_admitad_source', expectedTrafficSource,\
-    \ {\n  domain: expectedCookieDomain,\n  path: '/',\n  secure: true,\n  httpOnly:\
-    \ false,\n  'max-age': 60 * 60 * 24 * expectedCookieExpirationInDays\n}, false);\n"
+    \ + expectedPageViewData.admitadSourceChannelParameterValue + '&admitad_uid=test'\n\
+    });\n\nconst expectedCookieValue = getExpectedAdmitadSourceCookieValue(expectedPageViewData.admitadSourceChannelParameterValue);\n\
+    \nrunCode(mockData);\n\nassertApi('gtmOnSuccess').wasCalled();\nassertApi('gtmOnFailure').wasNotCalled();\n\
+    assertApi('setCookie').wasCalledWith('_admitad_source', expectedCookieValue, {\n\
+    \  domain: expectedCookieDomain,\n  path: '/',\n  secure: true,\n  httpOnly: false,\n\
+    \  'max-age': 60 * 60 * 24 * expectedCookieExpirationInDays\n}, false);\n"
+- name: PageView - Traffic Source cookie is set if URL contains it and it does NOT
+    match Admitad
+  code: "const expectedCookieDomain = 'example.com';\nconst expectedCookieExpirationInDays\
+    \ = 90;\nsetMockDataForPageview({\n  cookieDomain: expectedCookieDomain,\n  cookieExpiration:\
+    \ expectedCookieExpirationInDays \n});\n\nconst expectedTrafficSource = 'expectedTrafficSource';\n\
+    mock('getAllEventData', {\n  page_location: 'https://example.com/?utm_source='\
+    \ + expectedTrafficSource + '&admitad_uid=test'\n});\n\nconst expectedCookieValue\
+    \ = getExpectedAdmitadSourceCookieValue(expectedTrafficSource);\n\nrunCode(mockData);\n\
+    \nassertApi('gtmOnSuccess').wasCalled();\nassertApi('gtmOnFailure').wasNotCalled();\n\
+    assertApi('setCookie').wasCalledWith('_admitad_source', expectedCookieValue, {\n\
+    \  domain: expectedCookieDomain,\n  path: '/',\n  secure: true,\n  httpOnly: false,\n\
+    \  'max-age': 60 * 60 * 24 * expectedCookieExpirationInDays\n}, false);\n"
 - name: Conversion - Request is sent and 'channel' parameter is 'na' if the Traffic
     Source cookie is not set
   code: "setMockDataForConversion({\n  orderId: 'expectedOrderId',\n  price: '123.45',\n\
@@ -1252,18 +1259,19 @@ scenarios:
     \ 'expectedCountryCode',\n  city: 'expectedCity',\n  promocode: 'expectedPromoCode',\n\
     \  quantity: 'expectedQuantity',\n  positionId: 'expectedPositionId',\n  positionCount:\
     \ 'expectedPositionCount',\n  productId: 'expectedProductId'\n});\n\nconst expectedChannelParameter\
-    \ = getExpectedChannelParameter(undefined);\n\nconst expectedRequestBaseUrl =\
-    \ 'https://ad.admitad.com/tt';\nconst expectedRequestOptions = { method: 'GET'\
-    \ };\nconst expectedQueryParameters = {\n  postback: '1',\n  response_type: 'img',\n\
-    \  adm_method: 'plugin',\n  adm_method_name: 'server_gtm_stape',\n  campaign_code:\
-    \ expectedConversionData.campaignCode,\n  postback_key: expectedConversionData.postbackKey,\n\
-    \  action_code: expectedConversionData.actionCode,\n  tariff_code: expectedConversionData.tariffCode,\n\
-    \  payment_type: expectedConversionData.paymentType,\n  channel: expectedChannelParameter,\n\
-    \  order_id: expectedConversionData.orderId,\n  price: expectedConversionData.price,\n\
-    \  client_id: expectedConversionData.clientId,\n  currency_code: expectedConversionData.currencyCode,\n\
-    \  country_code: expectedConversionData.countryCode,\n  city: expectedConversionData.city,\n\
-    \  promocode: expectedConversionData.promocode,\n  quantity: expectedConversionData.quantity,\n\
-    \  position_id: expectedConversionData.positionId,\n  position_count: expectedConversionData.positionCount,\n\
+    \ = getExpectedChannelParameter(undefined);\n\nconst expectedClickId = 'expectedClickId';\n\
+    setCookie('_aid', expectedClickId);\n\nconst expectedRequestBaseUrl = 'https://ad.admitad.com/tt';\n\
+    const expectedRequestOptions = { method: 'GET' };\nconst expectedQueryParameters\
+    \ = {\n  postback: '1',\n  response_type: 'img',\n  adm_method: 'plugin',\n  adm_method_name:\
+    \ 'server_gtm_stape',\n  campaign_code: expectedConversionData.campaignCode,\n\
+    \  postback_key: expectedConversionData.postbackKey,\n  action_code: expectedConversionData.actionCode,\n\
+    \  tariff_code: expectedConversionData.tariffCode,\n  payment_type: expectedConversionData.paymentType,\n\
+    \  channel: expectedChannelParameter,\n  order_id: expectedConversionData.orderId,\n\
+    \  price: expectedConversionData.price,\n  client_id: expectedConversionData.clientId,\n\
+    \  currency_code: expectedConversionData.currencyCode,\n  country_code: expectedConversionData.countryCode,\n\
+    \  city: expectedConversionData.city,\n  promocode: expectedConversionData.promocode,\n\
+    \  uid: expectedClickId,\n  quantity: expectedConversionData.quantity,\n  position_id:\
+    \ expectedConversionData.positionId,\n  position_count: expectedConversionData.positionCount,\n\
     \  product_id: expectedConversionData.productId\n};\n\nmock('sendHttpRequest',\
     \ (requestUrl, callback, requestOptions) => {\n  const parsedRequestUrl = parseUrl(requestUrl);\n\
     \  assertThat(parsedRequestUrl.origin + parsedRequestUrl.pathname).isEqualTo(expectedRequestBaseUrl);\n\
@@ -1278,8 +1286,9 @@ scenarios:
     \ 'expectedCountryCode',\n  city: 'expectedCity',\n  promocode: 'expectedPromoCode',\n\
     \  quantity: 'expectedQuantity',\n  positionId: 'expectedPositionId',\n  positionCount:\
     \ 'expectedPositionCount',\n  productId: 'expectedProductId'\n});\n\nconst expectedAdmitadSourceCookie\
-    \ = 'google';\nsetAdmitadSourceCookie(expectedAdmitadSourceCookie);\nconst expectedChannelParameter\
-    \ = getExpectedChannelParameter(expectedAdmitadSourceCookie);\n\nconst expectedRequestBaseUrl\
+    \ = 'google';\nsetCookie('_admitad_source', expectedAdmitadSourceCookie);\nconst\
+    \ expectedChannelParameter = getExpectedChannelParameter();\n\nconst expectedClickId\
+    \ = 'expectedClickId';\nsetCookie('_aid', expectedClickId);\n\nconst expectedRequestBaseUrl\
     \ = 'https://ad.admitad.com/tt';\nconst expectedRequestOptions = { method: 'GET'\
     \ };\nconst expectedQueryParameters = {\n  postback: '1',\n  response_type: 'img',\n\
     \  adm_method: 'plugin',\n  adm_method_name: 'server_gtm_stape',\n  campaign_code:\
@@ -1289,8 +1298,8 @@ scenarios:
     \  order_id: expectedConversionData.orderId,\n  price: expectedConversionData.price,\n\
     \  client_id: expectedConversionData.clientId,\n  currency_code: expectedConversionData.currencyCode,\n\
     \  country_code: expectedConversionData.countryCode,\n  city: expectedConversionData.city,\n\
-    \  promocode: expectedConversionData.promocode,\n  uid: expectedAdmitadSourceCookie,\n\
-    \  quantity: expectedConversionData.quantity,\n  position_id: expectedConversionData.positionId,\n\
+    \  promocode: expectedConversionData.promocode,\n  uid: expectedClickId,\n  quantity:\
+    \ expectedConversionData.quantity,\n  position_id: expectedConversionData.positionId,\n\
     \  position_count: expectedConversionData.positionCount,\n  product_id: expectedConversionData.productId\n\
     };\n\nmock('sendHttpRequest', (requestUrl, callback, requestOptions) => {\n  const\
     \ parsedRequestUrl = parseUrl(requestUrl);\n  assertThat(parsedRequestUrl.origin\
@@ -1305,8 +1314,9 @@ scenarios:
     \ 'expectedCountryCode',\n  city: 'expectedCity',\n  promocode: 'expectedPromoCode',\n\
     \  quantity: 'expectedQuantity',\n  positionId: 'expectedPositionId',\n  positionCount:\
     \ 'expectedPositionCount',\n  productId: 'expectedProductId'\n});\n\nconst expectedAdmitadSourceCookie\
-    \ = 'admitad';\nsetAdmitadSourceCookie(expectedAdmitadSourceCookie);\nconst expectedChannelParameter\
-    \ = getExpectedChannelParameter(expectedAdmitadSourceCookie);\n\nconst expectedRequestBaseUrl\
+    \ = 'admitad';\nsetCookie('_admitad_source', expectedAdmitadSourceCookie);\nconst\
+    \ expectedChannelParameter = getExpectedChannelParameter();\n\nconst expectedClickId\
+    \ = 'expectedClickId';\nsetCookie('_aid', expectedClickId);\n\nconst expectedRequestBaseUrl\
     \ = 'https://ad.admitad.com/tt';\nconst expectedRequestOptions = { method: 'GET'\
     \ };\nconst expectedQueryParameters = {\n  postback: '1',\n  response_type: 'img',\n\
     \  adm_method: 'plugin',\n  adm_method_name: 'server_gtm_stape',\n  campaign_code:\
@@ -1316,8 +1326,8 @@ scenarios:
     \  order_id: expectedConversionData.orderId,\n  price: expectedConversionData.price,\n\
     \  client_id: expectedConversionData.clientId,\n  currency_code: expectedConversionData.currencyCode,\n\
     \  country_code: expectedConversionData.countryCode,\n  city: expectedConversionData.city,\n\
-    \  promocode: expectedConversionData.promocode,\n  uid: expectedAdmitadSourceCookie,\n\
-    \  quantity: expectedConversionData.quantity,\n  position_id: expectedConversionData.positionId,\n\
+    \  promocode: expectedConversionData.promocode,\n  uid: expectedClickId,\n  quantity:\
+    \ expectedConversionData.quantity,\n  position_id: expectedConversionData.positionId,\n\
     \  position_count: expectedConversionData.positionCount,\n  product_id: expectedConversionData.productId\n\
     };\n\nmock('sendHttpRequest', (requestUrl, callback, requestOptions) => {\n  const\
     \ parsedRequestUrl = parseUrl(requestUrl);\n  assertThat(parsedRequestUrl.origin\
@@ -1331,8 +1341,9 @@ scenarios:
     \  clientId: 'expectedClientId',\n  currencyCode: 'expectedCurrencyCode',\n  countryCode:\
     \ 'expectedCountryCode',\n  city: 'expectedCity',\n  promocode: 'expectedPromoCode',\n\
     \  items: [\n    { quantity: 1, productId: '1' },\n    { quantity: 2, productId:\
-    \ '2' },\n  ]\n});\n\nconst expectedAdmitadSourceCookie = 'admitad';\nsetAdmitadSourceCookie(expectedAdmitadSourceCookie);\n\
-    const expectedChannelParameter = getExpectedChannelParameter(expectedAdmitadSourceCookie);\n\
+    \ '2' },\n  ]\n});\n\nconst expectedAdmitadSourceCookie = 'admitad';\nsetCookie('_admitad_source',\
+    \ expectedAdmitadSourceCookie);\nconst expectedChannelParameter = getExpectedChannelParameter();\n\
+    \nconst expectedClickId = 'expectedClickId';\nsetCookie('_aid', expectedClickId);\n\
     \nconst expectedRequestBaseUrl = 'https://ad.admitad.com/tt';\nconst expectedRequestOptions\
     \ = { method: 'GET' };\nconst expectedQueryParametersList = expectedConversionData.items.map((item,\
     \ index) => {\n  return {\n    postback: '1',\n    response_type: 'img',\n   \
@@ -1343,7 +1354,7 @@ scenarios:
     \    order_id: expectedConversionData.orderId,\n    price: expectedConversionData.price,\n\
     \    client_id: expectedConversionData.clientId,\n    currency_code: expectedConversionData.currencyCode,\n\
     \    country_code: expectedConversionData.countryCode,\n    city: expectedConversionData.city,\n\
-    \    promocode: expectedConversionData.promocode,\n    uid: expectedAdmitadSourceCookie,\n\
+    \    promocode: expectedConversionData.promocode,\n    uid: expectedClickId,\n\
     \    quantity: item.quantity + '',\n    position_id: (index + 1) + '',\n    position_count:\
     \ (expectedConversionData.items.length) + '',\n    product_id: item.productId\
     \ + ''\n  };\n});\n\nlet expectedSendHttpRequestExecutions = expectedQueryParametersList.length;\n\
@@ -1355,10 +1366,10 @@ scenarios:
     \  \n  expectedSendHttpRequestExecutions--;\n});\n\nrunCode(mockData);\n\nassertApi('gtmOnSuccess').wasCalled();\n\
     assertApi('gtmOnFailure').wasNotCalled();"
 - name: Should log to console, if the 'Always log to console' option is selected
-  code: "mockData = setMockDataForConversion();\nmockData.logType = 'always';\nsetAdmitadSourceCookie('admitad');\n\
-    \nconst expectedDebugMode = true;\nmock('getContainerVersion', () => {\n  return\
-    \ {\n    debugMode: expectedDebugMode\n  };\n}); \n\nmock('logToConsole', (logData)\
-    \ => {\n  const parsedLogData = JSON.parse(logData);\n  requiredConsoleKeys.forEach(p\
+  code: "mockData = setMockDataForConversion();\nmockData.logType = 'always';\nsetCookie('_admitad_source',\
+    \ 'admitad');\n\nconst expectedDebugMode = true;\nmock('getContainerVersion',\
+    \ () => {\n  return {\n    debugMode: expectedDebugMode\n  };\n}); \n\nmock('logToConsole',\
+    \ (logData) => {\n  const parsedLogData = JSON.parse(logData);\n  requiredConsoleKeys.forEach(p\
     \ => assertThat(parsedLogData[p]).isDefined());\n});\n\nmock('sendHttpRequest',\
     \ (requestUrl, callback, requestOptions) => {\n  callback(200);\n});\n\nrunCode(mockData);\n\
     \nassertApi('logToConsole').wasCalled();\n"
@@ -1367,7 +1378,7 @@ scenarios:
   code: |
     mockData = setMockDataForConversion();
     mockData.logType = 'debug';
-    setAdmitadSourceCookie('admitad');
+    setCookie('_admitad_source', 'admitad');
 
     const expectedDebugMode = true;
     mock('getContainerVersion', () => {
@@ -1390,16 +1401,16 @@ scenarios:
     assertApi('logToConsole').wasCalled();
 - name: Should NOT log to console, if the 'Log during debug and preview' option is
     selected AND is NOT on preview mode
-  code: "mockData = setMockDataForConversion();\nmockData.logType = 'debug';\nsetAdmitadSourceCookie('admitad');\n\
-    \nconst expectedDebugMode = false;\nmock('getContainerVersion', () => {\n  return\
-    \ {\n    debugMode: expectedDebugMode\n  };\n}); \n\nmock('sendHttpRequest', (requestUrl,\
-    \ callback, requestOptions) => {\n  callback(200);\n});\n\nrunCode(mockData);\n\
+  code: "mockData = setMockDataForConversion();\nmockData.logType = 'debug';\nsetCookie('_admitad_source',\
+    \ 'admitad');\n\nconst expectedDebugMode = false;\nmock('getContainerVersion',\
+    \ () => {\n  return {\n    debugMode: expectedDebugMode\n  };\n}); \n\nmock('sendHttpRequest',\
+    \ (requestUrl, callback, requestOptions) => {\n  callback(200);\n});\n\nrunCode(mockData);\n\
     \nassertApi('logToConsole').wasNotCalled();\n"
 - name: Should NOT log to console, if the 'Do not log' option is selected
   code: |
     mockData = setMockDataForConversion();
     mockData.logType = 'no';
-    setAdmitadSourceCookie('admitad');
+    setCookie('_admitad_source', 'admitad');
 
     mock('sendHttpRequest', (requestUrl, callback, requestOptions) => {
       callback(200);
@@ -1410,7 +1421,7 @@ scenarios:
     assertApi('logToConsole').wasNotCalled();
 - name: Should log to BQ, if the 'Log to BigQuery' option is selected
   code: "mockData = setMockDataForConversion();\nmockData.bigQueryLogType = 'always';\n\
-    setAdmitadSourceCookie('admitad');\n\n// assertApi doesn't work for 'BigQuery.insert()'.\n\
+    setCookie('_admitad_source', 'admitad');\n\n// assertApi doesn't work for 'BigQuery.insert()'.\n\
     // Ref: https://gtm-gear.com/posts/gtm-templates-testing/\nmock('BigQuery', ()\
     \ => {\n  return { \n    insert: (connectionInfo, rows, options) => { \n     \
     \ assertThat(connectionInfo).isDefined();\n      assertThat(rows).isArray();\n\
@@ -1420,7 +1431,7 @@ scenarios:
     \ (requestUrl, callback, requestOptions) => {\n  callback(200);\n});\n\nrunCode(mockData);"
 - name: Should NOT log to BQ, if the 'Do not log to BigQuery' option is selected
   code: "mockData = setMockDataForConversion();\nmockData.bigQueryLogType = 'no';\n\
-    setAdmitadSourceCookie('admitad');\n\n// assertApi doesn't work for 'BigQuery.insert()'.\n\
+    setCookie('_admitad_source', 'admitad');\n\n// assertApi doesn't work for 'BigQuery.insert()'.\n\
     // Ref: https://gtm-gear.com/posts/gtm-templates-testing/\nmock('BigQuery', ()\
     \ => {\n  return { \n    insert: (connectionInfo, rows, options) => { \n     \
     \ fail('BigQuery.insert should not have been called.');\n      return Promise.create((resolve,\
@@ -1454,11 +1465,15 @@ setup: "const JSON = require('JSON');\nconst Promise = require('Promise');\ncons
   \  mockData.postbackKey = expectedConversionData.postbackKey;\n  mockData.actionCode\
   \ = expectedConversionData.actionCode;\n  mockData.tariffCode = expectedConversionData.tariffCode;\n\
   \  mockData.paymentType = expectedConversionData.paymentType;\n  mergeObj(expectedConversionData,\
-  \ objToBeMerged);\n  return mergeObj(mockData, objToBeMerged);\n};\n\nconst setAdmitadSourceCookie\
-  \ = (cookieValue) => {\n  mock('getCookieValues', () => { \n    if ('_admitad_source')\
-  \ return [cookieValue];\n  });\n};\nconst getExpectedChannelParameter = (sourceCookie)\
-  \ => {\n  if (!sourceCookie) return 'na';\n  return sourceCookie === expectedPageViewData.admitadSourceChannelParameterValue\
-  \ ? 'admitad' : 'other';\n};"
+  \ objToBeMerged);\n  return mergeObj(mockData, objToBeMerged);\n};\n\nconst getExpectedAdmitadSourceCookieValue\
+  \ = (urlParameterValue) => {\n  return urlParameterValue === expectedPageViewData.admitadSourceChannelParameterValue\
+  \ ? 'admitad' : 'other';\n};\n\nconst cookies = {};\nmock('getCookieValues', (cookieName)\
+  \ => { \n  return cookies[cookieName] || [];\n});\nconst setCookie = (cookieName,\
+  \ value) => {\n  if (cookieName === '_aid') cookies[cookieName] = [value];\n  else\
+  \ if (cookieName === '_admitad_source') cookies[cookieName] = [getExpectedAdmitadSourceCookieValue(value)];\n\
+  };\n\nconst getExpectedChannelParameter = () => {\n  if (!cookies._admitad_source\
+  \ || !cookies._admitad_source.length) return 'na';\n  return cookies._admitad_source[0];\n\
+  };"
 
 
 ___NOTES___

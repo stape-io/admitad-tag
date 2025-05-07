@@ -72,7 +72,15 @@ function trackPageView() {
   sourceChannelParametersName.some((p) => {
     const sourceChannelParameterValue = urlSearchParams[p];
     if (sourceChannelParameterValue) {
-      setCookie('_admitad_source', sourceChannelParameterValue, cookieOptions, false);
+      const admitadSourceChannelParameterValue = data.admitadSourceChannelParameterValue || 'admitad';
+      setCookie(
+        '_admitad_source',
+        sourceChannelParameterValue.toLowerCase() === admitadSourceChannelParameterValue.toLowerCase()
+          ? 'admitad'
+          : 'other',
+        cookieOptions,
+        false
+      );
       return true;
     }
     return false;
@@ -80,14 +88,6 @@ function trackPageView() {
 }
 
 function trackConversion() {
-  // [TO DO] Remove it from code.
-  /*
-  const admitadSourceChannelParameterValue = (data.admitadSourceChannelParameterValue || 'admitad').toLowerCase();
-  const lastSourceChannel = (getCookieValues('_admitad_source')[0] || '').toLowerCase();
-
-  if (lastSourceChannel !== admitadSourceChannelParameterValue) return;
-  */
-
   const requestUrls = getRequestUrls();
 
   (requestUrls || []).forEach((requestUrl) => {
@@ -136,7 +136,7 @@ function getRequestUrls() {
   requestUrl = requestUrl + '&tariff_code=' + enc(data.tariffCode);
   requestUrl = requestUrl + '&payment_type=' + enc(data.paymentType);
 
-  requestUrl = requestUrl + '&channel=' + enc(getChannelParameter());
+  requestUrl = requestUrl + '&channel=' + enc(getCookieValues('_admitad_source')[0] || 'na');
 
   const orderId = data.orderId || eventData.orderId || eventData.order_id || eventData.transaction_id;
   if (orderId) {
@@ -230,13 +230,6 @@ function getRequestUrls() {
   }
 
   return requestUrls;
-}
-
-function getChannelParameter() {
-  const admitadSourceCookie = (getCookieValues('_admitad_source')[0] || '').toLowerCase();
-  if (!admitadSourceCookie) return 'na';
-  const admitadSourceChannelParameterValue = (data.admitadSourceChannelParameterValue || 'admitad').toLowerCase();
-  return admitadSourceCookie === admitadSourceChannelParameterValue ? 'admitad' : 'other';
 }
 
 function getUserAddressFromCommonEventData() {

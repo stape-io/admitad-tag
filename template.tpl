@@ -1,4 +1,12 @@
-﻿___INFO___
+﻿___TERMS_OF_SERVICE___
+
+By creating or modifying this file you agree to Google Tag Manager's Community
+Template Gallery Developer Terms of Service available at
+https://developers.google.com/tag-manager/gallery-tos (or such other URL as
+Google may provide), as modified from time to time.
+
+
+___INFO___
 
 {
   "type": "TAG",
@@ -56,7 +64,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "defaultValue": "admitad_uid",
-        "help": "By default, it\u0027s the \u003ci\u003eadmitad_uid\u003c/i\u003e URL parameter. In most cases you won\u0027t need to change it. Only change it if you do a custom implementation.",
+        "help": "By default, it\u0027s the \u003ci\u003eadmitad_uid\u003c/i\u003e URL parameter.\u003cbr/\u003e In most cases you won\u0027t need to change it. Only change this if you’re using a custom implementation.",
         "valueHint": "admitad_uid"
       },
       {
@@ -70,7 +78,7 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "defaultValue": "utm_source",
-        "help": "Specify a comma-separated list of URL parameters used to identify paid traffic sources.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eutm_source\u003c/i\u003e",
+        "help": "Specify the URL parameter used to identify paid traffic sources.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eutm_source\u003c/i\u003e",
         "valueHint": "utm_source"
       },
       {
@@ -80,6 +88,19 @@ ___TEMPLATE_PARAMETERS___
         "simpleValueType": true,
         "help": "Specify a comma-separated list of additional URL parameters that may indicate a paid source.\n\u003cbr/\u003e\u003cbr/\u003e\nUse this field when the primary \u003cb\u003eLast Paid Click URL Parameter\u003c/b\u003e might not be present in the URL, or when dealing with unique tracking parameters from various ad platforms.\n\u003cbr/\u003e\u003cbr/\u003e\nThis field has lower precedence than the \u003cb\u003eLast Paid Click URL Parameter\u003c/b\u003e and acts as a fallback.\n\u003cbr/\u003e\u003cbr/\u003e\nCommon examples include:\n\u003cul\u003e \u003cli\u003e\u003cb\u003eMeta\u003c/b\u003e: fbclid\u003c/li\u003e \u003cli\u003e\u003cb\u003eGoogle\u003c/b\u003e: gclid, dclid, gbraid, wbraid\u003c/li\u003e \u003cli\u003e\u003cb\u003eTikTok\u003c/b\u003e: ttclid\u003c/li\u003e \u003cli\u003e\u003cb\u003eX (Twitter)\u003c/b\u003e: twclid\u003c/li\u003e \u003cli\u003e\u003cb\u003eBing\u003c/b\u003e: msclkid\u003c/li\u003e \u003cli\u003e\u003cb\u003eSnapchat\u003c/b\u003e: scclid\u003c/li\u003e \u003cli\u003e\u003cb\u003ePinterest\u003c/b\u003e: epik\u003c/li\u003e \u003cli\u003e\u003cb\u003eAwin\u003c/b\u003e: awc\u003c/li\u003e \u003c/ul\u003e",
         "valueHint": "gclid,wbraid,gbraid,fbclid,ttclid"
+      },
+      {
+        "type": "TEXT",
+        "name": "admitadSourceChannelParameterValue",
+        "displayName": "Admitad Traffic Source Identifier",
+        "simpleValueType": true,
+        "valueValidators": [
+          {
+            "type": "NON_EMPTY"
+          }
+        ],
+        "defaultValue": "admitad",
+        "help": "Specify the expected \u003cb\u003evalue\u003c/b\u003e for the Last Paid Click URL Parameter that identifies Admitad traffic (e.g., \u003ci\u003eutm_source\u003dadmitad\u003c/i\u003e). \n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eadmitad\u003c/i\u003e"
       },
       {
         "type": "GROUP",
@@ -128,19 +149,6 @@ ___TEMPLATE_PARAMETERS___
     "name": "conversionGroup",
     "groupStyle": "NO_ZIPPY",
     "subParams": [
-      {
-        "type": "TEXT",
-        "name": "admitadSourceChannelParameterValue",
-        "displayName": "Admitad Traffic Source Identifier",
-        "simpleValueType": true,
-        "valueValidators": [
-          {
-            "type": "NON_EMPTY"
-          }
-        ],
-        "defaultValue": "admitad",
-        "help": "Specify the expected \u003cb\u003evalue\u003c/b\u003e for the Last Paid Click URL Parameter that identifies Admitad traffic (e.g., \u003ci\u003eutm_source\u003dadmitad\u003c/i\u003e). \n\u003cbr/\u003e\nThis value will be compared with the one stored in the \u003ci\u003e_admitad_source\u003c/i\u003e cookie. The conversion event will \u003cb\u003eonly\u003c/b\u003e be sent if both values match.\n\u003cbr/\u003e\u003cbr/\u003e\nDefault: \u003ci\u003eadmitad\u003c/i\u003e"
-      },
       {
         "type": "TEXT",
         "name": "campaignCode",
@@ -224,23 +232,31 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "type": "TEXT",
+            "name": "clickId",
+            "displayName": "admitad_uid value",
+            "simpleValueType": true,
+            "help": "If left empty, this value will be automatically taken from the \u003ci\u003e_aid\u003c/i\u003e cookie, which is set on pages containing the \u003ci\u003eadmitad_uid\u003c/i\u003e URL parameter.\n\u003cbr/\u003eOnly change this if you’re using a custom implementation."
+          },
+          {
+            "type": "TEXT",
             "name": "quantity",
             "displayName": "Quantity",
-            "simpleValueType": true
+            "simpleValueType": true,
+            "help": "Product items quantity."
           },
           {
             "type": "TEXT",
             "name": "positionId",
-            "displayName": "Position Id",
+            "displayName": "Position ID",
             "simpleValueType": true,
-            "help": "A variable varying from 1 to N, where N \u003d position_count."
+            "help": "A variable varying from 1 to N, where N \u003d Position Count."
           },
           {
             "type": "TEXT",
             "name": "positionCount",
             "displayName": "Position Count",
             "simpleValueType": true,
-            "help": "A variable with the value N that depends on what\u0027s in the user\u0027s cart."
+            "help": "Number of unique items in the cart. A variable with the value N that depends on what\u0027s in the user\u0027s cart."
           },
           {
             "type": "TEXT",
@@ -254,7 +270,7 @@ ___TEMPLATE_PARAMETERS___
             "name": "countryCode",
             "displayName": "Country Code",
             "simpleValueType": true,
-            "help": "Defined in ISO 3166. Letters only."
+            "help": "Defined in ISO 3166. Letters only.\u003cbr/\u003eOnly use this parameter if you have set up geotargeting."
           },
           {
             "type": "TEXT",
@@ -512,10 +528,13 @@ function trackPageView() {
 }
 
 function trackConversion() {
+  // [TO DO] Remove it from code.
+  /*
   const admitadSourceChannelParameterValue = (data.admitadSourceChannelParameterValue || 'admitad').toLowerCase();
   const lastSourceChannel = (getCookieValues('_admitad_source')[0] || '').toLowerCase();
 
   if (lastSourceChannel !== admitadSourceChannelParameterValue) return;
+  */
 
   const requestUrls = getRequestUrls();
 
@@ -556,13 +575,16 @@ function sendRequest(requestUrl) {
 }
 
 function getRequestUrls() {
-  let requestUrl = 'https://ad.admitad.com/r?postback=1';
+  let requestUrl =
+    'https://ad.admitad.com/tt?postback=1&response_type=img&adm_method=plugin&adm_method_name=server_gtm_stape';
 
   requestUrl = requestUrl + '&campaign_code=' + enc(data.campaignCode);
   requestUrl = requestUrl + '&postback_key=' + enc(data.postbackKey);
   requestUrl = requestUrl + '&action_code=' + enc(data.actionCode);
   requestUrl = requestUrl + '&tariff_code=' + enc(data.tariffCode);
   requestUrl = requestUrl + '&payment_type=' + enc(data.paymentType);
+
+  requestUrl = requestUrl + '&channel=' + enc(getChannelParameter());
 
   const orderId = data.orderId || eventData.orderId || eventData.order_id || eventData.transaction_id;
   if (orderId) {
@@ -584,19 +606,24 @@ function getRequestUrls() {
     requestUrl = requestUrl + '&currency_code=' + enc(currency);
   }
 
-  const city = data.city || eventData.city || eventData.city;
-  if (city) {
-    requestUrl = requestUrl + '&city=' + enc(city);
-  }
-
   const coupon = data.promocode || eventData.promocode || eventData.coupon;
   if (coupon) {
     requestUrl = requestUrl + '&promocode=' + enc(coupon);
   }
 
-  const cookie = getCookieValues('_aid')[0] || '';
-  if (cookie) {
-    requestUrl = requestUrl + '&uid=' + enc(cookie);
+  const clickId = data.clickId || getCookieValues('_aid')[0] || '';
+  if (clickId) {
+    requestUrl = requestUrl + '&uid=' + enc(clickId);
+  }
+
+  const userAddress = getUserAddressFromCommonEventData();
+  const countryCode = data.countryCode || eventData.countryCode || eventData.country || userAddress.country;
+  if (countryCode) {
+    requestUrl = requestUrl + '&country_code=' + enc(countryCode);
+  }
+  const city = data.city || eventData.city || userAddress.city;
+  if (city) {
+    requestUrl = requestUrl + '&city=' + enc(city);
   }
 
   if (data.quantity || data.positionId || data.positionCount || data.productId) {
@@ -627,22 +654,20 @@ function getRequestUrls() {
     return [requestUrl];
   }
 
-  let requestUrls = [];
+  const requestUrls = [];
 
   for (let i = 0; i < items.length; i++) {
-    let item = items[i];
+    const item = items[i];
+
     let itemUrl = requestUrl + '&quantity=' + enc(item.quantity || item.item_quantity);
 
-    if (item.positionId) {
-      itemUrl = itemUrl + '&position_id=' + enc(i + 1);
-    }
+    itemUrl = itemUrl + '&position_id=' + (item.positionId ? enc(item.positionId) : enc(i + 1));
 
-    if (item.positionCount) {
-      itemUrl = itemUrl + '&position_count=' + enc(items.length);
-    }
+    itemUrl = itemUrl + '&position_count=' + (item.positionCount ? enc(item.positionCount) : enc(items.length));
 
-    if (item.productId) {
-      itemUrl = itemUrl + '&product_id=' + enc(item.productId || item.product_id || item.item_id);
+    const productId = item.productId || item.product_id || item.item_id;
+    if (productId) {
+      itemUrl = itemUrl + '&product_id=' + enc(productId);
     }
 
     if (sameUrlExists(requestUrls, itemUrl)) {
@@ -653,6 +678,22 @@ function getRequestUrls() {
   }
 
   return requestUrls;
+}
+
+function getChannelParameter() {
+  const admitadSourceCookie = (getCookieValues('_admitad_source')[0] || '').toLowerCase();
+  if (!admitadSourceCookie) return 'na';
+  const admitadSourceChannelParameterValue = (data.admitadSourceChannelParameterValue || 'admitad').toLowerCase();
+  return admitadSourceCookie === admitadSourceChannelParameterValue ? 'admitad' : 'other';
+}
+
+function getUserAddressFromCommonEventData() {
+  const user_data = eventData.user_data || {};
+  let user_address = user_data.address;
+  if (['array', 'object'].indexOf(getType(user_address)) === -1) {
+    user_address = {};
+  }
+  return user_address[0] || user_address || {};
 }
 
 /**********************************************************************************************/
@@ -1204,34 +1245,24 @@ scenarios:
     assertApi('setCookie').wasCalledWith('_admitad_source', expectedTrafficSource,\
     \ {\n  domain: expectedCookieDomain,\n  path: '/',\n  secure: true,\n  httpOnly:\
     \ false,\n  'max-age': 60 * 60 * 24 * expectedCookieExpirationInDays\n}, false);\n"
-- name: Conversion - Request is NOT sent if the Traffic Source cookie is not from
-    Admitad
-  code: |
-    setMockDataForConversion();
-    const expectedAdmitadSourceCookie = 'google';
-    setAdmitadSourceCookie(expectedAdmitadSourceCookie);
-
-    runCode(mockData);
-
-    assertApi('gtmOnSuccess').wasCalled();
-    assertApi('gtmOnFailure').wasNotCalled();
-    assertApi('sendHttpRequest').wasNotCalled();
-- name: Conversion - Request is sent if the Traffic Source cookie is from Admitad
-    - Without items
+- name: Conversion - Request is sent and 'channel' parameter is 'na' if the Traffic
+    Source cookie is not set
   code: "setMockDataForConversion({\n  orderId: 'expectedOrderId',\n  price: '123.45',\n\
-    \  clientId: 'expectedClientId',\n  currencyCode: 'expectedCurrencyCode',\n  city:\
-    \ 'expectedCity',\n  promocode: 'expectedPromoCode',\n  quantity: 'expectedQuantity',\n\
-    \  positionId: 'expectedPositionId',\n  positionCount: 'expectedPositionCount',\n\
-    \  productId: 'expectedProductId'\n});\n\nconst expectedAdmitadSourceCookie =\
-    \ 'admitad';\nsetAdmitadSourceCookie(expectedAdmitadSourceCookie);\n\nconst expectedRequestBaseUrl\
-    \ = 'https://ad.admitad.com/r';\nconst expectedRequestOptions = { method: 'GET'\
-    \ };\nconst expectedQueryParameters = {\n  postback: '1',\n  campaign_code: expectedConversionData.campaignCode,\n\
-    \  postback_key: expectedConversionData.postbackKey,\n  action_code: expectedConversionData.actionCode,\n\
-    \  tariff_code: expectedConversionData.tariffCode,\n  payment_type: expectedConversionData.paymentType,\n\
+    \  clientId: 'expectedClientId',\n  currencyCode: 'expectedCurrencyCode',\n  countryCode:\
+    \ 'expectedCountryCode',\n  city: 'expectedCity',\n  promocode: 'expectedPromoCode',\n\
+    \  quantity: 'expectedQuantity',\n  positionId: 'expectedPositionId',\n  positionCount:\
+    \ 'expectedPositionCount',\n  productId: 'expectedProductId'\n});\n\nconst expectedChannelParameter\
+    \ = getExpectedChannelParameter(undefined);\n\nconst expectedRequestBaseUrl =\
+    \ 'https://ad.admitad.com/tt';\nconst expectedRequestOptions = { method: 'GET'\
+    \ };\nconst expectedQueryParameters = {\n  postback: '1',\n  response_type: 'img',\n\
+    \  adm_method: 'plugin',\n  adm_method_name: 'server_gtm_stape',\n  campaign_code:\
+    \ expectedConversionData.campaignCode,\n  postback_key: expectedConversionData.postbackKey,\n\
+    \  action_code: expectedConversionData.actionCode,\n  tariff_code: expectedConversionData.tariffCode,\n\
+    \  payment_type: expectedConversionData.paymentType,\n  channel: expectedChannelParameter,\n\
     \  order_id: expectedConversionData.orderId,\n  price: expectedConversionData.price,\n\
     \  client_id: expectedConversionData.clientId,\n  currency_code: expectedConversionData.currencyCode,\n\
-    \  city: expectedConversionData.city,\n  promocode: expectedConversionData.promocode,\n\
-    \  uid: expectedAdmitadSourceCookie,\n  quantity: expectedConversionData.quantity,\n\
+    \  country_code: expectedConversionData.countryCode,\n  city: expectedConversionData.city,\n\
+    \  promocode: expectedConversionData.promocode,\n  quantity: expectedConversionData.quantity,\n\
     \  position_id: expectedConversionData.positionId,\n  position_count: expectedConversionData.positionCount,\n\
     \  product_id: expectedConversionData.productId\n};\n\nmock('sendHttpRequest',\
     \ (requestUrl, callback, requestOptions) => {\n  const parsedRequestUrl = parseUrl(requestUrl);\n\
@@ -1240,28 +1271,84 @@ scenarios:
     \  assertThat(callback).isFunction();\n  assertThat(requestOptions).isEqualTo(expectedRequestOptions);\n\
     \  \n  callback(200);\n});\n\nrunCode(mockData);\n\nassertApi('gtmOnSuccess').wasCalled();\n\
     assertApi('gtmOnFailure').wasNotCalled();"
+- name: Conversion - Request is sent and 'channel' parameter is 'other' if the Traffic
+    Source cookie is not from Admitad
+  code: "setMockDataForConversion({\n  orderId: 'expectedOrderId',\n  price: '123.45',\n\
+    \  clientId: 'expectedClientId',\n  currencyCode: 'expectedCurrencyCode',\n  countryCode:\
+    \ 'expectedCountryCode',\n  city: 'expectedCity',\n  promocode: 'expectedPromoCode',\n\
+    \  quantity: 'expectedQuantity',\n  positionId: 'expectedPositionId',\n  positionCount:\
+    \ 'expectedPositionCount',\n  productId: 'expectedProductId'\n});\n\nconst expectedAdmitadSourceCookie\
+    \ = 'google';\nsetAdmitadSourceCookie(expectedAdmitadSourceCookie);\nconst expectedChannelParameter\
+    \ = getExpectedChannelParameter(expectedAdmitadSourceCookie);\n\nconst expectedRequestBaseUrl\
+    \ = 'https://ad.admitad.com/tt';\nconst expectedRequestOptions = { method: 'GET'\
+    \ };\nconst expectedQueryParameters = {\n  postback: '1',\n  response_type: 'img',\n\
+    \  adm_method: 'plugin',\n  adm_method_name: 'server_gtm_stape',\n  campaign_code:\
+    \ expectedConversionData.campaignCode,\n  postback_key: expectedConversionData.postbackKey,\n\
+    \  action_code: expectedConversionData.actionCode,\n  tariff_code: expectedConversionData.tariffCode,\n\
+    \  payment_type: expectedConversionData.paymentType,\n  channel: expectedChannelParameter,\n\
+    \  order_id: expectedConversionData.orderId,\n  price: expectedConversionData.price,\n\
+    \  client_id: expectedConversionData.clientId,\n  currency_code: expectedConversionData.currencyCode,\n\
+    \  country_code: expectedConversionData.countryCode,\n  city: expectedConversionData.city,\n\
+    \  promocode: expectedConversionData.promocode,\n  uid: expectedAdmitadSourceCookie,\n\
+    \  quantity: expectedConversionData.quantity,\n  position_id: expectedConversionData.positionId,\n\
+    \  position_count: expectedConversionData.positionCount,\n  product_id: expectedConversionData.productId\n\
+    };\n\nmock('sendHttpRequest', (requestUrl, callback, requestOptions) => {\n  const\
+    \ parsedRequestUrl = parseUrl(requestUrl);\n  assertThat(parsedRequestUrl.origin\
+    \ + parsedRequestUrl.pathname).isEqualTo(expectedRequestBaseUrl);\n  assertThat(parsedRequestUrl.searchParams).isEqualTo(expectedQueryParameters);\n\
+    \  assertThat(callback).isFunction();\n  assertThat(requestOptions).isEqualTo(expectedRequestOptions);\n\
+    \  \n  callback(200);\n});\n\nrunCode(mockData);\n\nassertApi('gtmOnSuccess').wasCalled();\n\
+    assertApi('gtmOnFailure').wasNotCalled();"
+- name: Conversion - Request is sent if the Traffic Source cookie is from Admitad
+    - Without items
+  code: "setMockDataForConversion({\n  orderId: 'expectedOrderId',\n  price: '123.45',\n\
+    \  clientId: 'expectedClientId',\n  currencyCode: 'expectedCurrencyCode',\n  countryCode:\
+    \ 'expectedCountryCode',\n  city: 'expectedCity',\n  promocode: 'expectedPromoCode',\n\
+    \  quantity: 'expectedQuantity',\n  positionId: 'expectedPositionId',\n  positionCount:\
+    \ 'expectedPositionCount',\n  productId: 'expectedProductId'\n});\n\nconst expectedAdmitadSourceCookie\
+    \ = 'admitad';\nsetAdmitadSourceCookie(expectedAdmitadSourceCookie);\nconst expectedChannelParameter\
+    \ = getExpectedChannelParameter(expectedAdmitadSourceCookie);\n\nconst expectedRequestBaseUrl\
+    \ = 'https://ad.admitad.com/tt';\nconst expectedRequestOptions = { method: 'GET'\
+    \ };\nconst expectedQueryParameters = {\n  postback: '1',\n  response_type: 'img',\n\
+    \  adm_method: 'plugin',\n  adm_method_name: 'server_gtm_stape',\n  campaign_code:\
+    \ expectedConversionData.campaignCode,\n  postback_key: expectedConversionData.postbackKey,\n\
+    \  action_code: expectedConversionData.actionCode,\n  tariff_code: expectedConversionData.tariffCode,\n\
+    \  payment_type: expectedConversionData.paymentType,\n  channel: expectedChannelParameter,\n\
+    \  order_id: expectedConversionData.orderId,\n  price: expectedConversionData.price,\n\
+    \  client_id: expectedConversionData.clientId,\n  currency_code: expectedConversionData.currencyCode,\n\
+    \  country_code: expectedConversionData.countryCode,\n  city: expectedConversionData.city,\n\
+    \  promocode: expectedConversionData.promocode,\n  uid: expectedAdmitadSourceCookie,\n\
+    \  quantity: expectedConversionData.quantity,\n  position_id: expectedConversionData.positionId,\n\
+    \  position_count: expectedConversionData.positionCount,\n  product_id: expectedConversionData.productId\n\
+    };\n\nmock('sendHttpRequest', (requestUrl, callback, requestOptions) => {\n  const\
+    \ parsedRequestUrl = parseUrl(requestUrl);\n  assertThat(parsedRequestUrl.origin\
+    \ + parsedRequestUrl.pathname).isEqualTo(expectedRequestBaseUrl);\n  assertThat(parsedRequestUrl.searchParams).isEqualTo(expectedQueryParameters);\n\
+    \  assertThat(callback).isFunction();\n  assertThat(requestOptions).isEqualTo(expectedRequestOptions);\n\
+    \  \n  callback(200);\n});\n\nrunCode(mockData);\n\nassertApi('gtmOnSuccess').wasCalled();\n\
+    assertApi('gtmOnFailure').wasNotCalled();"
 - name: Conversion - Request is sent if the Traffic Source cookie is from Admitad
     - With items
   code: "setMockDataForConversion({\n  orderId: 'expectedOrderId',\n  price: '123.45',\n\
-    \  clientId: 'expectedClientId',\n  currencyCode: 'expectedCurrencyCode',\n  city:\
-    \ 'expectedCity',\n  promocode: 'expectedPromoCode',\n  items: [\n    { quantity:\
-    \ '1', positionId: '1', positionCount: 'foobar', productId: '1' },\n    { quantity:\
-    \ '2', positionId: '2', positionCount: 'foobar', productId: '2' },\n  ]\n});\n\
-    \nconst expectedAdmitadSourceCookie = 'admitad';\nsetAdmitadSourceCookie(expectedAdmitadSourceCookie);\n\
-    \nconst expectedRequestBaseUrl = 'https://ad.admitad.com/r';\nconst expectedRequestOptions\
+    \  clientId: 'expectedClientId',\n  currencyCode: 'expectedCurrencyCode',\n  countryCode:\
+    \ 'expectedCountryCode',\n  city: 'expectedCity',\n  promocode: 'expectedPromoCode',\n\
+    \  items: [\n    { quantity: 1, productId: '1' },\n    { quantity: 2, productId:\
+    \ '2' },\n  ]\n});\n\nconst expectedAdmitadSourceCookie = 'admitad';\nsetAdmitadSourceCookie(expectedAdmitadSourceCookie);\n\
+    const expectedChannelParameter = getExpectedChannelParameter(expectedAdmitadSourceCookie);\n\
+    \nconst expectedRequestBaseUrl = 'https://ad.admitad.com/tt';\nconst expectedRequestOptions\
     \ = { method: 'GET' };\nconst expectedQueryParametersList = expectedConversionData.items.map((item,\
-    \ index) => {\n  return {\n    postback: '1',\n    campaign_code: expectedConversionData.campaignCode,\n\
-    \    postback_key: expectedConversionData.postbackKey,\n    action_code: expectedConversionData.actionCode,\n\
-    \    tariff_code: expectedConversionData.tariffCode,\n    payment_type: expectedConversionData.paymentType,\n\
+    \ index) => {\n  return {\n    postback: '1',\n    response_type: 'img',\n   \
+    \ adm_method: 'plugin',\n    adm_method_name: 'server_gtm_stape',\n    campaign_code:\
+    \ expectedConversionData.campaignCode,\n    postback_key: expectedConversionData.postbackKey,\n\
+    \    action_code: expectedConversionData.actionCode,\n    tariff_code: expectedConversionData.tariffCode,\n\
+    \    payment_type: expectedConversionData.paymentType,\n    channel: expectedChannelParameter,\n\
     \    order_id: expectedConversionData.orderId,\n    price: expectedConversionData.price,\n\
     \    client_id: expectedConversionData.clientId,\n    currency_code: expectedConversionData.currencyCode,\n\
-    \    city: expectedConversionData.city,\n    promocode: expectedConversionData.promocode,\n\
-    \    uid: expectedAdmitadSourceCookie,\n    quantity: item.quantity,\n    position_id:\
-    \ (index + 1) + '',\n    position_count: (expectedConversionData.items.length)\
-    \ + '',\n    product_id: item.productId\n  };\n});\n\nlet expectedSendHttpRequestExecutions\
-    \ = expectedQueryParametersList.length;\nmock('sendHttpRequest', (requestUrl,\
-    \ callback, requestOptions) => {\n  const parsedRequestUrl = parseUrl(requestUrl);\n\
-    \  \n  assertThat(parsedRequestUrl.origin + parsedRequestUrl.pathname).isEqualTo(expectedRequestBaseUrl);\n\
+    \    country_code: expectedConversionData.countryCode,\n    city: expectedConversionData.city,\n\
+    \    promocode: expectedConversionData.promocode,\n    uid: expectedAdmitadSourceCookie,\n\
+    \    quantity: item.quantity + '',\n    position_id: (index + 1) + '',\n    position_count:\
+    \ (expectedConversionData.items.length) + '',\n    product_id: item.productId\
+    \ + ''\n  };\n});\n\nlet expectedSendHttpRequestExecutions = expectedQueryParametersList.length;\n\
+    mock('sendHttpRequest', (requestUrl, callback, requestOptions) => {\n  const parsedRequestUrl\
+    \ = parseUrl(requestUrl);\n  assertThat(parsedRequestUrl.origin + parsedRequestUrl.pathname).isEqualTo(expectedRequestBaseUrl);\n\
     \  assertThat(parsedRequestUrl.searchParams).isEqualTo(expectedQueryParametersList[expectedQueryParametersList.length\
     \ - expectedSendHttpRequestExecutions]);\n  assertThat(callback).isFunction();\n\
     \  assertThat(requestOptions).isEqualTo(expectedRequestOptions);\n  \n  callback(200);\n\
@@ -1349,10 +1436,8 @@ setup: "const JSON = require('JSON');\nconst Promise = require('Promise');\ncons
   \ = { ignoreUnknownValues: true };\n\nlet mockData = {\n  logBigQueryProjectId:\
   \ expectedBigQuerySettings.logBigQueryProjectId,\n  logBigQueryDatasetId: expectedBigQuerySettings.logBigQueryDatasetId,\n\
   \  logBigQueryTableId: expectedBigQuerySettings.logBigQueryTableId\n};\n\nconst\
-  \ setAdmitadSourceCookie = (cookieValue) => {\n  mock('getCookieValues', () => {\
-  \ \n    if ('_admitad_source') return [cookieValue];\n  });\n};\n\nconst expectedPageViewData\
-  \ = {\n  clickIdParameterName: 'admitad_uid',\n  sourceChannelParameterName: 'utm_source',\n\
-  \  additionalSourceChannelParametersName: 'gclid,fbclid',\n  admitadSourceChannelParameterValue:\
+  \ expectedPageViewData = {\n  clickIdParameterName: 'admitad_uid',\n  sourceChannelParameterName:\
+  \ 'utm_source',\n  additionalSourceChannelParametersName: 'gclid,fbclid',\n  admitadSourceChannelParameterValue:\
   \ 'admitad',\n  cookieExpiration: 90,\n  cookieDomain: 'expectedPaymentType'\n};\n\
   const setMockDataForPageview = (objToBeMerged) => {\n  mockData.type = 'page_view';\n\
   \  mockData.clickIdParameterName = expectedPageViewData.clickIdParameterName;\n\
@@ -1369,7 +1454,11 @@ setup: "const JSON = require('JSON');\nconst Promise = require('Promise');\ncons
   \  mockData.postbackKey = expectedConversionData.postbackKey;\n  mockData.actionCode\
   \ = expectedConversionData.actionCode;\n  mockData.tariffCode = expectedConversionData.tariffCode;\n\
   \  mockData.paymentType = expectedConversionData.paymentType;\n  mergeObj(expectedConversionData,\
-  \ objToBeMerged);\n  return mergeObj(mockData, objToBeMerged);\n};\n\n"
+  \ objToBeMerged);\n  return mergeObj(mockData, objToBeMerged);\n};\n\nconst setAdmitadSourceCookie\
+  \ = (cookieValue) => {\n  mock('getCookieValues', () => { \n    if ('_admitad_source')\
+  \ return [cookieValue];\n  });\n};\nconst getExpectedChannelParameter = (sourceCookie)\
+  \ => {\n  if (!sourceCookie) return 'na';\n  return sourceCookie === expectedPageViewData.admitadSourceChannelParameterValue\
+  \ ? 'admitad' : 'other';\n};"
 
 
 ___NOTES___

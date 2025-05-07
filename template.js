@@ -80,10 +80,13 @@ function trackPageView() {
 }
 
 function trackConversion() {
+  // [TO DO] Remove it from code.
+  /*
   const admitadSourceChannelParameterValue = (data.admitadSourceChannelParameterValue || 'admitad').toLowerCase();
   const lastSourceChannel = (getCookieValues('_admitad_source')[0] || '').toLowerCase();
 
   if (lastSourceChannel !== admitadSourceChannelParameterValue) return;
+  */
 
   const requestUrls = getRequestUrls();
 
@@ -124,13 +127,16 @@ function sendRequest(requestUrl) {
 }
 
 function getRequestUrls() {
-  let requestUrl = 'https://ad.admitad.com/r?postback=1';
+  let requestUrl =
+    'https://ad.admitad.com/tt?postback=1&response_type=img&adm_method=plugin&adm_method_name=server_gtm_stape';
 
   requestUrl = requestUrl + '&campaign_code=' + enc(data.campaignCode);
   requestUrl = requestUrl + '&postback_key=' + enc(data.postbackKey);
   requestUrl = requestUrl + '&action_code=' + enc(data.actionCode);
   requestUrl = requestUrl + '&tariff_code=' + enc(data.tariffCode);
   requestUrl = requestUrl + '&payment_type=' + enc(data.paymentType);
+
+  requestUrl = requestUrl + '&channel=' + enc(getChannelParameter());
 
   const orderId = data.orderId || eventData.orderId || eventData.order_id || eventData.transaction_id;
   if (orderId) {
@@ -152,19 +158,24 @@ function getRequestUrls() {
     requestUrl = requestUrl + '&currency_code=' + enc(currency);
   }
 
-  const city = data.city || eventData.city || eventData.city;
-  if (city) {
-    requestUrl = requestUrl + '&city=' + enc(city);
-  }
-
   const coupon = data.promocode || eventData.promocode || eventData.coupon;
   if (coupon) {
     requestUrl = requestUrl + '&promocode=' + enc(coupon);
   }
 
-  const cookie = getCookieValues('_aid')[0] || '';
-  if (cookie) {
-    requestUrl = requestUrl + '&uid=' + enc(cookie);
+  const clickId = data.clickId || getCookieValues('_aid')[0] || '';
+  if (clickId) {
+    requestUrl = requestUrl + '&uid=' + enc(clickId);
+  }
+
+  const userAddress = getUserAddressFromCommonEventData();
+  const countryCode = data.countryCode || eventData.countryCode || eventData.country || userAddress.country;
+  if (countryCode) {
+    requestUrl = requestUrl + '&country_code=' + enc(countryCode);
+  }
+  const city = data.city || eventData.city || userAddress.city;
+  if (city) {
+    requestUrl = requestUrl + '&city=' + enc(city);
   }
 
   if (data.quantity || data.positionId || data.positionCount || data.productId) {
@@ -195,22 +206,20 @@ function getRequestUrls() {
     return [requestUrl];
   }
 
-  let requestUrls = [];
+  const requestUrls = [];
 
   for (let i = 0; i < items.length; i++) {
-    let item = items[i];
+    const item = items[i];
+
     let itemUrl = requestUrl + '&quantity=' + enc(item.quantity || item.item_quantity);
 
-    if (item.positionId) {
-      itemUrl = itemUrl + '&position_id=' + enc(i + 1);
-    }
+    itemUrl = itemUrl + '&position_id=' + (item.positionId ? enc(item.positionId) : enc(i + 1));
 
-    if (item.positionCount) {
-      itemUrl = itemUrl + '&position_count=' + enc(items.length);
-    }
+    itemUrl = itemUrl + '&position_count=' + (item.positionCount ? enc(item.positionCount) : enc(items.length));
 
-    if (item.productId) {
-      itemUrl = itemUrl + '&product_id=' + enc(item.productId || item.product_id || item.item_id);
+    const productId = item.productId || item.product_id || item.item_id;
+    if (productId) {
+      itemUrl = itemUrl + '&product_id=' + enc(productId);
     }
 
     if (sameUrlExists(requestUrls, itemUrl)) {
@@ -221,6 +230,22 @@ function getRequestUrls() {
   }
 
   return requestUrls;
+}
+
+function getChannelParameter() {
+  const admitadSourceCookie = (getCookieValues('_admitad_source')[0] || '').toLowerCase();
+  if (!admitadSourceCookie) return 'na';
+  const admitadSourceChannelParameterValue = (data.admitadSourceChannelParameterValue || 'admitad').toLowerCase();
+  return admitadSourceCookie === admitadSourceChannelParameterValue ? 'admitad' : 'other';
+}
+
+function getUserAddressFromCommonEventData() {
+  const user_data = eventData.user_data || {};
+  let user_address = user_data.address;
+  if (['array', 'object'].indexOf(getType(user_address)) === -1) {
+    user_address = {};
+  }
+  return user_address[0] || user_address || {};
 }
 
 /**********************************************************************************************/

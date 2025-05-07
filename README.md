@@ -3,7 +3,7 @@
 The **Admitad tag** supports two types of events: **PageView** and **Conversion**.
 
 - **PageView event** – Stores the Click ID URL parameter (`admitad_uid`) inside the `_aid` cookie and the traffic source (e.g., `utm_source`) inside the `_admitad_source` cookie.
-- **Conversion event** – Sends an HTTP request with the specified conversion data to Admitad. The conversion event is only sent if the last paid traffic source is Admitad.
+- **Conversion event** – Sends an HTTP request with the specified conversion data to Admitad.
 
 ## How to Use the Admitad Tag
 

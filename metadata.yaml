@@ -1,7 +1,7 @@
 homepage: "https://stape.io/"
 documentation: "https://github.com/stape-io/admitad-tag"
 versions:
-  - sha: 6a795b65877b5e4c8d497dc628819ab3255460ee
+  - sha: b7cea5e8aae3789b6e91ffe6193e27b90b4d92c0
     changeNotes: Change request endpoint. Fix deduplication issues.
   - sha: 191287096598b205708e18658ae6ef3b2f4afe0d
     changeNotes: Initial release.

@@ -23,6 +23,7 @@ The **Admitad tag** supports two types of events: **PageView** and **Conversion*
 - **Order ID**
 - **Price**
 - **Client ID**
+- **admitad_uid**
 - **Quantity**
 - **Position ID**
 - **Position Count**

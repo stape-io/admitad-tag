@@ -1,6 +1,8 @@
-homepage: "https://stape.io/"
-documentation: "https://github.com/stape-io/admitad-tag"
+homepage: 'https://stape.io/'
+documentation: 'https://github.com/stape-io/admitad-tag'
 versions:
+  - sha: 6855d820d8d01c2203167b728fd5abe79386a62b
+    changeNotes: Update consent settings section.
   - sha: ef72eb96e9088fc0fb7f911b8e73825aed7449e6
     changeNotes: Remove some comments. Improve tests.
   - sha: b7cea5e8aae3789b6e91ffe6193e27b90b4d92c0

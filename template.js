@@ -72,10 +72,12 @@ function trackPageView() {
   sourceChannelParametersName.some((p) => {
     const sourceChannelParameterValue = urlSearchParams[p];
     if (sourceChannelParameterValue) {
-      const admitadSourceChannelParameterValue = data.admitadSourceChannelParameterValue || 'admitad';
+      const admitadSourceChannelParameterValue =
+        data.admitadSourceChannelParameterValue || 'admitad';
       setCookie(
         '_admitad_source',
-        sourceChannelParameterValue.toLowerCase() === admitadSourceChannelParameterValue.toLowerCase()
+        sourceChannelParameterValue.toLowerCase() ===
+          admitadSourceChannelParameterValue.toLowerCase()
           ? 'admitad'
           : 'other',
         cookieOptions,
@@ -138,7 +140,8 @@ function getRequestUrls() {
 
   requestUrl = requestUrl + '&channel=' + enc(getCookieValues('_admitad_source')[0] || 'na');
 
-  const orderId = data.orderId || eventData.orderId || eventData.order_id || eventData.transaction_id;
+  const orderId =
+    data.orderId || eventData.orderId || eventData.order_id || eventData.transaction_id;
   if (orderId) {
     requestUrl = requestUrl + '&order_id=' + enc(orderId);
   }
@@ -169,7 +172,8 @@ function getRequestUrls() {
   }
 
   const userAddress = getUserAddressFromCommonEventData();
-  const countryCode = data.countryCode || eventData.countryCode || eventData.country || userAddress.country;
+  const countryCode =
+    data.countryCode || eventData.countryCode || eventData.country || userAddress.country;
   if (countryCode) {
     requestUrl = requestUrl + '&country_code=' + enc(countryCode);
   }
@@ -215,7 +219,10 @@ function getRequestUrls() {
 
     itemUrl = itemUrl + '&position_id=' + (item.positionId ? enc(item.positionId) : enc(i + 1));
 
-    itemUrl = itemUrl + '&position_count=' + (item.positionCount ? enc(item.positionCount) : enc(items.length));
+    itemUrl =
+      itemUrl +
+      '&position_count=' +
+      (item.positionCount ? enc(item.positionCount) : enc(items.length));
 
     const productId = item.productId || item.product_id || item.item_id;
     if (productId) {
@@ -318,13 +325,17 @@ function logToBigQuery(dataToLog) {
     dataToLog[p] = JSON.stringify(dataToLog[p]);
   });
 
-  const bigquery = getType(BigQuery) === 'function' ? BigQuery() /* Only during Unit Tests */ : BigQuery;
+  const bigquery =
+    getType(BigQuery) === 'function' ? BigQuery() /* Only during Unit Tests */ : BigQuery;
   bigquery.insert(connectionInfo, [dataToLog], { ignoreUnknownValues: true });
 }
 
 function determinateIsLoggingEnabled() {
   const containerVersion = getContainerVersion();
-  const isDebug = !!(containerVersion && (containerVersion.debugMode || containerVersion.previewMode));
+  const isDebug = !!(
+    containerVersion &&
+    (containerVersion.debugMode || containerVersion.previewMode)
+  );
 
   if (!data.logType) {
     return isDebug;

@@ -309,14 +309,13 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "GROUP",
-    "name": "consentSettingsGroup",
-    "displayName": "Consent Settings",
+    "name": "tagExecutionConsentSettingsGroup",
+    "displayName": "Tag Execution Consent Settings",
     "groupStyle": "ZIPPY_CLOSED",
     "subParams": [
       {
         "type": "RADIO",
         "name": "adStorageConsent",
-        "displayName": "",
         "radioItems": [
           {
             "value": "optional",
@@ -324,7 +323,8 @@ ___TEMPLATE_PARAMETERS___
           },
           {
             "value": "required",
-            "displayValue": "Send data in case marketing consent given"
+            "displayValue": "Send data in case marketing consent given",
+            "help": "Aborts the tag execution if marketing consent (\u003ci\u003ead_storage\u003c/i\u003e Google Consent Mode or Stape\u0027s Data Tag parameter) is not given."
           }
         ],
         "simpleValueType": true,
@@ -520,10 +520,12 @@ function trackPageView() {
   sourceChannelParametersName.some((p) => {
     const sourceChannelParameterValue = urlSearchParams[p];
     if (sourceChannelParameterValue) {
-      const admitadSourceChannelParameterValue = data.admitadSourceChannelParameterValue || 'admitad';
+      const admitadSourceChannelParameterValue =
+        data.admitadSourceChannelParameterValue || 'admitad';
       setCookie(
         '_admitad_source',
-        sourceChannelParameterValue.toLowerCase() === admitadSourceChannelParameterValue.toLowerCase()
+        sourceChannelParameterValue.toLowerCase() ===
+          admitadSourceChannelParameterValue.toLowerCase()
           ? 'admitad'
           : 'other',
         cookieOptions,
@@ -586,7 +588,8 @@ function getRequestUrls() {
 
   requestUrl = requestUrl + '&channel=' + enc(getCookieValues('_admitad_source')[0] || 'na');
 
-  const orderId = data.orderId || eventData.orderId || eventData.order_id || eventData.transaction_id;
+  const orderId =
+    data.orderId || eventData.orderId || eventData.order_id || eventData.transaction_id;
   if (orderId) {
     requestUrl = requestUrl + '&order_id=' + enc(orderId);
   }
@@ -617,7 +620,8 @@ function getRequestUrls() {
   }
 
   const userAddress = getUserAddressFromCommonEventData();
-  const countryCode = data.countryCode || eventData.countryCode || eventData.country || userAddress.country;
+  const countryCode =
+    data.countryCode || eventData.countryCode || eventData.country || userAddress.country;
   if (countryCode) {
     requestUrl = requestUrl + '&country_code=' + enc(countryCode);
   }
@@ -663,7 +667,10 @@ function getRequestUrls() {
 
     itemUrl = itemUrl + '&position_id=' + (item.positionId ? enc(item.positionId) : enc(i + 1));
 
-    itemUrl = itemUrl + '&position_count=' + (item.positionCount ? enc(item.positionCount) : enc(items.length));
+    itemUrl =
+      itemUrl +
+      '&position_count=' +
+      (item.positionCount ? enc(item.positionCount) : enc(items.length));
 
     const productId = item.productId || item.product_id || item.item_id;
     if (productId) {
@@ -766,13 +773,17 @@ function logToBigQuery(dataToLog) {
     dataToLog[p] = JSON.stringify(dataToLog[p]);
   });
 
-  const bigquery = getType(BigQuery) === 'function' ? BigQuery() /* Only during Unit Tests */ : BigQuery;
+  const bigquery =
+    getType(BigQuery) === 'function' ? BigQuery() /* Only during Unit Tests */ : BigQuery;
   bigquery.insert(connectionInfo, [dataToLog], { ignoreUnknownValues: true });
 }
 
 function determinateIsLoggingEnabled() {
   const containerVersion = getContainerVersion();
-  const isDebug = !!(containerVersion && (containerVersion.debugMode || containerVersion.previewMode));
+  const isDebug = !!(
+    containerVersion &&
+    (containerVersion.debugMode || containerVersion.previewMode)
+  );
 
   if (!data.logType) {
     return isDebug;
@@ -1462,4 +1473,5 @@ setup: "const JSON = require('JSON');\nconst Promise = require('Promise');\ncons
 ___NOTES___
 
 Created on 12/27/2024, 3:32:15 PM
+
 

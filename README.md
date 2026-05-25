@@ -37,11 +37,6 @@ The **Admitad tag** supports two types of events: **PageView** and **Conversion*
 - **Cookie Expiration** – The number of days the Admitad cookies (Click ID and source channel) will remain active. Set this value according to the agreement. Default: 395 days.
 - **Cookie Domain** – Override the default domain where the cookies are stored. By default, the domain is automatically determined.
 
-### Logging Settings
-
-- **Log Type** – Defines the logging level. Options: `no`, `debug`, or `always`.
-- **BigQuery Logs** – Optionally log events to BigQuery for later analysis.
-
 ## Useful Resources
 
 - [Admitad tag for server GTM](https://stape.io/solutions/admitad-tag)

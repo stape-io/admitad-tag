@@ -19,7 +19,7 @@ ___INFO___
     "displayName": "stape.io",
     "thumbnail": "data:image/png;base64,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"
   },
-  "description": "Admitad (Mitgo) server to server conversion tracking",
+  "description": "Admitad (Mitgo) server to server conversion tracking.",
   "containerContexts": [
     "SERVER"
   ]
@@ -331,131 +331,19 @@ ___TEMPLATE_PARAMETERS___
         "defaultValue": "optional"
       }
     ]
-  },
-  {
-    "type": "GROUP",
-    "name": "logsGroup",
-    "displayName": "Logs Settings",
-    "groupStyle": "ZIPPY_CLOSED",
-    "subParams": [
-      {
-        "type": "RADIO",
-        "name": "logType",
-        "radioItems": [
-          {
-            "value": "no",
-            "displayValue": "Do not log"
-          },
-          {
-            "value": "debug",
-            "displayValue": "Log to console during debug and preview"
-          },
-          {
-            "value": "always",
-            "displayValue": "Always log to console"
-          }
-        ],
-        "simpleValueType": true,
-        "defaultValue": "debug"
-      }
-    ],
-    "enablingConditions": [
-      {
-        "paramName": "type",
-        "paramValue": "conversion",
-        "type": "EQUALS"
-      }
-    ]
-  },
-  {
-    "displayName": "BigQuery Logs Settings",
-    "name": "bigQueryLogsGroup",
-    "groupStyle": "ZIPPY_CLOSED",
-    "type": "GROUP",
-    "subParams": [
-      {
-        "type": "RADIO",
-        "name": "bigQueryLogType",
-        "radioItems": [
-          {
-            "value": "no",
-            "displayValue": "Do not log to BigQuery"
-          },
-          {
-            "value": "always",
-            "displayValue": "Log to BigQuery"
-          }
-        ],
-        "simpleValueType": true,
-        "defaultValue": "no"
-      },
-      {
-        "type": "GROUP",
-        "name": "logsBigQueryConfigGroup",
-        "groupStyle": "NO_ZIPPY",
-        "subParams": [
-          {
-            "type": "TEXT",
-            "name": "logBigQueryProjectId",
-            "displayName": "BigQuery Project ID",
-            "simpleValueType": true,
-            "help": "Optional.  \u003cbr\u003e\u003cbr\u003e  If omitted, it will be retrieved from the environment variable \u003cI\u003eGOOGLE_CLOUD_PROJECT\u003c/i\u003e where the server container is running. If the server container is running on Google Cloud, \u003cI\u003eGOOGLE_CLOUD_PROJECT\u003c/i\u003e will already be set to the Google Cloud project\u0027s ID."
-          },
-          {
-            "type": "TEXT",
-            "name": "logBigQueryDatasetId",
-            "displayName": "BigQuery Dataset ID",
-            "simpleValueType": true,
-            "valueValidators": [
-              {
-                "type": "NON_EMPTY"
-              }
-            ]
-          },
-          {
-            "type": "TEXT",
-            "name": "logBigQueryTableId",
-            "displayName": "BigQuery Table ID",
-            "simpleValueType": true,
-            "valueValidators": [
-              {
-                "type": "NON_EMPTY"
-              }
-            ]
-          }
-        ],
-        "enablingConditions": [
-          {
-            "paramName": "bigQueryLogType",
-            "paramValue": "always",
-            "type": "EQUALS"
-          }
-        ]
-      }
-    ],
-    "enablingConditions": [
-      {
-        "paramName": "type",
-        "paramValue": "conversion",
-        "type": "EQUALS"
-      }
-    ]
   }
 ]
 
 
 ___SANDBOXED_JS_FOR_SERVER___
 
-const BigQuery = require('BigQuery');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');
 const getContainerVersion = require('getContainerVersion');
 const getCookieValues = require('getCookieValues');
 const getRequestHeader = require('getRequestHeader');
-const getTimestampMillis = require('getTimestampMillis');
 const getType = require('getType');
 const JSON = require('JSON');
-const logToConsole = require('logToConsole');
 const makeInteger = require('makeInteger');
 const makeString = require('makeString');
 const parseUrl = require('parseUrl');
@@ -463,8 +351,6 @@ const sendHttpRequest = require('sendHttpRequest');
 const setCookie = require('setCookie');
 
 /**********************************************************************************************/
-
-const traceId = getRequestHeader('trace-id');
 
 const eventData = getAllEventData();
 
@@ -547,27 +433,9 @@ function trackConversion() {
 }
 
 function sendRequest(requestUrl) {
-  log({
-    Name: 'Admitad',
-    Type: 'Request',
-    TraceId: traceId,
-    EventName: 'Conversion',
-    RequestMethod: 'GET',
-    RequestUrl: requestUrl
-  });
-
   sendHttpRequest(
     requestUrl,
     (statusCode, headers, body) => {
-      log({
-        Name: 'Admitad',
-        Type: 'Response',
-        TraceId: traceId,
-        EventName: 'Conversion',
-        ResponseStatusCode: statusCode,
-        ResponseHeaders: headers,
-        ResponseBody: body
-      });
       // https://support.mitgo.com/knowledge-base/article/integration-via-postback-request_2#how-to-set-postback-request
       // "The Admitad server doesn't have any special response to postback requests.
       // You will always see the status "HTTP 200 OK".
@@ -717,94 +585,6 @@ function isConsentGivenOrNotRequired() {
   return xGaGcs[2] === '1';
 }
 
-function log(rawDataToLog) {
-  const logDestinationsHandlers = {};
-  if (determinateIsLoggingEnabled()) logDestinationsHandlers.console = logConsole;
-  if (determinateIsLoggingEnabledForBigQuery()) logDestinationsHandlers.bigQuery = logToBigQuery;
-
-  const keyMappings = {
-    // No transformation for Console is needed.
-    bigQuery: {
-      Name: 'tag_name',
-      Type: 'type',
-      TraceId: 'trace_id',
-      EventName: 'event_name',
-      RequestMethod: 'request_method',
-      RequestUrl: 'request_url',
-      RequestBody: 'request_body',
-      ResponseStatusCode: 'response_status_code',
-      ResponseHeaders: 'response_headers',
-      ResponseBody: 'response_body'
-    }
-  };
-
-  for (const logDestination in logDestinationsHandlers) {
-    const handler = logDestinationsHandlers[logDestination];
-    if (!handler) continue;
-
-    const mapping = keyMappings[logDestination];
-    const dataToLog = mapping ? {} : rawDataToLog;
-
-    if (mapping) {
-      for (const key in rawDataToLog) {
-        const mappedKey = mapping[key] || key;
-        dataToLog[mappedKey] = rawDataToLog[key];
-      }
-    }
-
-    handler(dataToLog);
-  }
-}
-
-function logConsole(dataToLog) {
-  logToConsole(JSON.stringify(dataToLog));
-}
-
-function logToBigQuery(dataToLog) {
-  const connectionInfo = {
-    projectId: data.logBigQueryProjectId,
-    datasetId: data.logBigQueryDatasetId,
-    tableId: data.logBigQueryTableId
-  };
-
-  dataToLog.timestamp = getTimestampMillis();
-
-  ['request_body', 'response_headers', 'response_body'].forEach((p) => {
-    dataToLog[p] = JSON.stringify(dataToLog[p]);
-  });
-
-  const bigquery =
-    getType(BigQuery) === 'function' ? BigQuery() /* Only during Unit Tests */ : BigQuery;
-  bigquery.insert(connectionInfo, [dataToLog], { ignoreUnknownValues: true });
-}
-
-function determinateIsLoggingEnabled() {
-  const containerVersion = getContainerVersion();
-  const isDebug = !!(
-    containerVersion &&
-    (containerVersion.debugMode || containerVersion.previewMode)
-  );
-
-  if (!data.logType) {
-    return isDebug;
-  }
-
-  if (data.logType === 'no') {
-    return false;
-  }
-
-  if (data.logType === 'debug') {
-    return isDebug;
-  }
-
-  return data.logType === 'always';
-}
-
-function determinateIsLoggingEnabledForBigQuery() {
-  if (data.bigQueryLogType === 'no') return false;
-  return data.bigQueryLogType === 'always';
-}
-
 
 ___SERVER_PERMISSIONS___
 
@@ -821,21 +601,6 @@ ___SERVER_PERMISSIONS___
           "value": {
             "type": 2,
             "listItem": [
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "headerName"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "trace-id"
-                  }
-                ]
-              },
               {
                 "type": 3,
                 "mapKey": [
@@ -917,27 +682,6 @@ ___SERVER_PERMISSIONS___
                 "string": "_admitad_source"
               }
             ]
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
-        "publicId": "logging",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "environments",
-          "value": {
-            "type": 1,
-            "string": "all"
           }
         }
       ]
@@ -1116,67 +860,6 @@ ___SERVER_PERMISSIONS___
               {
                 "type": 1,
                 "string": "https://ad.admitad.com/"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
-        "publicId": "access_bigquery",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "allowedTables",
-          "value": {
-            "type": 2,
-            "listItem": [
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "projectId"
-                  },
-                  {
-                    "type": 1,
-                    "string": "datasetId"
-                  },
-                  {
-                    "type": 1,
-                    "string": "tableId"
-                  },
-                  {
-                    "type": 1,
-                    "string": "operation"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "*"
-                  },
-                  {
-                    "type": 1,
-                    "string": "*"
-                  },
-                  {
-                    "type": 1,
-                    "string": "*"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  }
-                ]
               }
             ]
           }
@@ -1369,66 +1052,6 @@ scenarios:
     \  assertThat(requestOptions).isEqualTo(expectedRequestOptions);\n  \n  callback(200);\n\
     \  \n  expectedSendHttpRequestExecutions--;\n});\n\nrunCode(mockData);\n\nassertApi('gtmOnSuccess').wasCalled();\n\
     assertApi('gtmOnFailure').wasNotCalled();"
-- name: Should log to console, if the 'Always log to console' option is selected
-  code: "mockData = setMockDataForConversion();\nmockData.logType = 'always';\nsetCookie('_admitad_source',\
-    \ 'admitad');\n\nconst expectedDebugMode = true;\nmock('getContainerVersion',\
-    \ () => {\n  return {\n    debugMode: expectedDebugMode\n  };\n}); \n\nmock('logToConsole',\
-    \ (logData) => {\n  const parsedLogData = JSON.parse(logData);\n  requiredConsoleKeys.forEach(p\
-    \ => assertThat(parsedLogData[p]).isDefined());\n});\n\nrunCode(mockData);\n\n\
-    assertApi('logToConsole').wasCalled();"
-- name: Should log to console, if the 'Log during debug and preview' option is selected
-    AND is on preview mode
-  code: |-
-    mockData = setMockDataForConversion();
-    mockData.logType = 'debug';
-    setCookie('_admitad_source', 'admitad');
-
-    const expectedDebugMode = true;
-    mock('getContainerVersion', () => {
-      return {
-        debugMode: expectedDebugMode
-      };
-    });
-
-    mock('logToConsole', (logData) => {
-      const parsedLogData = JSON.parse(logData);
-      requiredConsoleKeys.forEach(p => assertThat(parsedLogData[p]).isDefined());
-    });
-
-    runCode(mockData);
-
-    assertApi('logToConsole').wasCalled();
-- name: Should NOT log to console, if the 'Log during debug and preview' option is
-    selected AND is NOT on preview mode
-  code: "mockData = setMockDataForConversion();\nmockData.logType = 'debug';\nsetCookie('_admitad_source',\
-    \ 'admitad');\n\nconst expectedDebugMode = false;\nmock('getContainerVersion',\
-    \ () => {\n  return {\n    debugMode: expectedDebugMode\n  };\n}); \n\nrunCode(mockData);\n\
-    \nassertApi('logToConsole').wasNotCalled();"
-- name: Should NOT log to console, if the 'Do not log' option is selected
-  code: |
-    mockData = setMockDataForConversion();
-    mockData.logType = 'no';
-    setCookie('_admitad_source', 'admitad');
-
-    runCode(mockData);
-
-    assertApi('logToConsole').wasNotCalled();
-- name: Should log to BQ, if the 'Log to BigQuery' option is selected
-  code: "mockData = setMockDataForConversion();\nmockData.bigQueryLogType = 'always';\n\
-    setCookie('_admitad_source', 'admitad');\n\n// assertApi doesn't work for 'BigQuery.insert()'.\n\
-    // Ref: https://gtm-gear.com/posts/gtm-templates-testing/\nmock('BigQuery', ()\
-    \ => {\n  return { \n    insert: (connectionInfo, rows, options) => { \n     \
-    \ assertThat(connectionInfo).isDefined();\n      assertThat(rows).isArray();\n\
-    \      assertThat(rows).hasLength(1);\n      requiredBqKeys.forEach(p => assertThat(rows[0][p]).isDefined());\n\
-    \      assertThat(options).isEqualTo(expectedBqOptions);\n      return Promise.create((resolve,\
-    \ reject) => {\n        resolve();\n      });\n    }\n  };\n});\n\nrunCode(mockData);"
-- name: Should NOT log to BQ, if the 'Do not log to BigQuery' option is selected
-  code: "mockData = setMockDataForConversion();\nmockData.bigQueryLogType = 'no';\n\
-    setCookie('_admitad_source', 'admitad');\n\n// assertApi doesn't work for 'BigQuery.insert()'.\n\
-    // Ref: https://gtm-gear.com/posts/gtm-templates-testing/\nmock('BigQuery', ()\
-    \ => {\n  return { \n    insert: (connectionInfo, rows, options) => { \n     \
-    \ fail('BigQuery.insert should not have been called.');\n      return Promise.create((resolve,\
-    \ reject) => {\n        resolve();\n      });\n    }\n  };\n});\n\nrunCode(mockData);"
 setup: "const JSON = require('JSON');\nconst Promise = require('Promise');\nconst\
   \ parseUrl = require('parseUrl');\n\nfunction mergeObj(target, source) {\n  for\
   \ (const key in source) {\n    if (source.hasOwnProperty(key)) target[key] = source[key];\n\
@@ -1472,6 +1095,8 @@ setup: "const JSON = require('JSON');\nconst Promise = require('Promise');\ncons
 
 ___NOTES___
 
-Created on 12/27/2024, 3:32:15 PM
+2026-05-25 Change Notes:
+ - Logging removal.
 
+Created on 12/27/2024, 3:32:15 PM
 
